@@ -1,0 +1,10 @@
+.git
+.vscode
+.env
+.env.*
+!*.example
+**/node_modules
+**/.next
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
