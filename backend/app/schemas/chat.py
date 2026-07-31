@@ -8,7 +8,6 @@ from app.schemas.conversation import (
     ConversationSuggestion,
 )
 
-
 ChatStatus = Literal[
     "success",
     "collecting_fields",

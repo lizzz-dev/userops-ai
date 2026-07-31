@@ -2,7 +2,6 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 AssistantIntent = Literal[
     "start_operation",
     "provide_information",

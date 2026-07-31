@@ -7,7 +7,6 @@ from app.models.account import Account
 from app.schemas.user import UserCreate, UserResponse, UserUpdate
 from app.services import audit_service, user_service
 
-
 router = APIRouter(
     prefix="/users",
     tags=["Users"],

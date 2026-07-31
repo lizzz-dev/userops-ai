@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from app.core.config import get_settings
 from app.models.conversation import Conversation
@@ -13,7 +13,6 @@ from app.services.command_parser import (
     extract_phone,
     extract_user_id,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -157,12 +156,15 @@ def _extract_name(message: str, operation: str) -> str | None:
     elif operation in {"read", "delete"}:
         patterns = [
             (
-                rf"\b(?:show|shwo|find|fnd|get|display|view|lookup|look\s+up|search|"
-                rf"serach|delete|delte|delet|remove|remvoe|erase)\s+"
-                rf"(?:me\s+)?(?:the\s+)?(?:user\s+)?(?:named\s+)?"
-                rf"([A-Za-z][A-Za-z .'-]{{0,100}})$"
+                r"\b(?:show|shwo|find|fnd|get|display|view|lookup|look\s+up|search|"
+                r"serach|delete|delte|delet|remove|remvoe|erase)\s+"
+                r"(?:me\s+)?(?:the\s+)?(?:user\s+)?(?:named\s+)?"
+                r"([A-Za-z][A-Za-z .'-]{0,100})$"
             ),
-            r"\bwhere\s+(?:is|are)\s+(?:the\s+)?(?:user\s+)?([A-Za-z][A-Za-z .'-]{0,100}?)(?:\s+user)?$",
+            (
+                r"\bwhere\s+(?:is|are)\s+(?:the\s+)?(?:user\s+)?"
+                r"([A-Za-z][A-Za-z .'-]{0,100}?)(?:\s+user)?$"
+            ),
             r"\b(?:about|for|of)\s+([A-Za-z][A-Za-z .'-]{0,100})$",
         ]
     elif operation == "update":
@@ -195,7 +197,9 @@ def _extract_name(message: str, operation: str) -> str | None:
                 if operation == "create" and email:
                     local_part = email.split("@", 1)[0].lower()
                     compact_candidate = candidate.lower().replace(" ", "")
-                    has_explicit_email_label = bool(re.search(r"\bwith\s+email\b", normalized_message, re.I))
+                    has_explicit_email_label = bool(
+                        re.search(r"\bwith\s+email\b", normalized_message, re.I)
+                    )
                     if not has_explicit_email_label and (
                         compact_candidate == local_part or "." in candidate
                     ):

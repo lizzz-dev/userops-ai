@@ -8,7 +8,6 @@ from app.models.account import Account
 from app.services import account_service
 from app.services.security import decode_access_token
 
-
 settings = get_settings()
 session_cookie = APIKeyCookie(
     name=settings.session_cookie_name,
