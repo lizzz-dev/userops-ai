@@ -34,9 +34,9 @@ Production deployment setup for Render and Vercel
 
 Deployment links can be added here after production deployment:
 
-Frontend: Add Vercel URL
+Frontend: Frontend: https://userops-web.vercel.app
 
-Backend API: Add Render URL
+Backend API: https://userops-ai.vercel.app
 
 Why this project exists
 
