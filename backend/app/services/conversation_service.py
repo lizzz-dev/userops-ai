@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from app.models.conversation import Conversation
 from app.models.conversation_message import ConversationMessage
 
-
 MessageRole = Literal["user", "assistant", "system"]
 
 

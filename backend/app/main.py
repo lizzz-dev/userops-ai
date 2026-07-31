@@ -16,7 +16,6 @@ from app.models import (
     User,
 )  # noqa: F401
 
-
 settings = get_settings()
 
 

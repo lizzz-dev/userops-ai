@@ -2,12 +2,11 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
-from jwt import InvalidTokenError
 from argon2 import PasswordHasher
 from argon2.exceptions import InvalidHashError, VerifyMismatchError
+from jwt import InvalidTokenError
 
 from app.core.config import get_settings
-
 
 settings = get_settings()
 password_hasher = PasswordHasher()

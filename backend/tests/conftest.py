@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-
 # These environment variables must be set before importing the application.
 # The application settings and database engine are created during imports.
 TEST_DB = Path(__file__).parent / "test_userops.db"

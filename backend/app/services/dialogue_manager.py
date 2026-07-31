@@ -15,7 +15,6 @@ from app.services.command_parser import extract_email
 from app.services.security import create_delete_confirmation_token
 from app.services.user_resolver import resolve_user
 
-
 HELP_TEXT = (
     "I can create, find, update, list, count, and safely delete managed users. "
     "You can speak naturally and continue across messages. For example: “We have "
