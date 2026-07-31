@@ -1,10 +1,9 @@
-from typing import Literal, TypeAlias
+from typing import Literal
 
 from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.services import user_service
-
 
 ResolutionStatus = Literal[
     "found",
@@ -12,7 +11,7 @@ ResolutionStatus = Literal[
     "multiple_matches",
     "missing_reference",
 ]
-ResolutionResult: TypeAlias = tuple[
+type ResolutionResult = tuple[
     ResolutionStatus,
     User | list[User] | None,
 ]

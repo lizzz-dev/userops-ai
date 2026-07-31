@@ -14,7 +14,6 @@ from app.schemas.account import (
 from app.services import account_service
 from app.services.security import create_access_token
 
-
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 settings = get_settings()
 

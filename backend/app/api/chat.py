@@ -29,7 +29,6 @@ from app.services.dialogue_manager import (
 )
 from app.services.security import decode_delete_confirmation_token
 
-
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 

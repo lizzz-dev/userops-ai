@@ -663,9 +663,10 @@ def test_common_typos_use_safe_fallback(
 
     assert updated["data"]["city"] == "Multan"
 
-    def test_completed_deletion_cannot_be_falsely_cancelled(
+def test_completed_deletion_cannot_be_falsely_cancelled(
     authenticated_client: TestClient,
-): client = authenticated_client
+):
+    client = authenticated_client
 
     created = assert_success(
         send_chat(

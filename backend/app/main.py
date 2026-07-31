@@ -4,18 +4,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
+from app import models  # noqa: F401
 from app.api import auth, chat, users
 from app.core.config import get_settings
 from app.db.database import Base, engine
 from app.db.schema_compat import upgrade_legacy_schema
-from app.models import (
-    Account,
-    AuditLog,
-    Conversation,
-    ConversationMessage,
-    User,
-)  # noqa: F401
-
 
 settings = get_settings()
 
