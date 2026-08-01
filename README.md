@@ -707,6 +707,6 @@ Production monitoring and alerting
 
 Author
 
-Developed as an AI engineering internship project.
+Developed as an AI CHATBOT test project.
 
 GitHub: https://github.com/lizzz-dev
