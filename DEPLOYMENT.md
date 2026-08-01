@@ -20,7 +20,7 @@ Backend API: https://userops-ai.vercel.app
 
 Backend health check: https://userops-ai.vercel.app/health
 
-Frontend: add the final Vercel frontend URL after deployment
+Frontend: https://userops-web.vercel.app
 
 Prerequisites
 
@@ -56,7 +56,7 @@ Local test databases
 
 The repository .gitignore should exclude all private and generated files while allowing .env.example.
 
-1. Push and verify the repository
+Push and verify the repository
 
 The repository is:
 
@@ -68,29 +68,19 @@ git status
 
 Run the local checks:
 
-cd backend
-python -m ruff check app tests
-python -m pytest -q
-cd ..
+cd backendpython -m ruff check app testspython -m pytest -qcd ..
 
-cd frontend
-npm run typecheck
-npm run lint
-npm run build
-cd ..
+cd frontendnpm run typechecknpm run lintnpm run buildcd ..
 
 Commit and push:
 
-git add .
-git commit -m "Describe the change"
-git push
+git add .git commit -m "Describe the change"git push
 
 On GitHub, verify:
 
-CI / backend   passed
-CI / frontend  passed
+CI / backend   passedCI / frontend  passed
 
-2. Create the Neon PostgreSQL database
+Create the Neon PostgreSQL database
 
 Sign in to Neon.
 
@@ -106,7 +96,7 @@ Keep the string private.
 
 It should look similar to:
 
-postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
+postgresql://USER@HOST/DATABASE?sslmode=require
 
 For a serverless application, a pooled Neon connection string is appropriate. The host normally contains -pooler.
 
@@ -114,7 +104,7 @@ This complete string is used as the backend DATABASE_URL.
 
 Do not split it into POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB unless the code is explicitly changed to use those variables.
 
-3. Backend files required by Vercel
+Backend files required by Vercel
 
 The backend project root is:
 
@@ -144,7 +134,7 @@ Ruff configuration
 
 Keep requirements.txt as well because it is still useful for Docker and local development.
 
-4. Deploy the FastAPI backend on Vercel
+Deploy the FastAPI backend on Vercel
 
 Create the backend project
 
@@ -158,10 +148,7 @@ lizzz-dev/userops-ai
 
 Configure:
 
-Project name: userops-ai
-Root Directory: backend
-Framework Preset: Other / FastAPI
-Branch: main
+Project name: userops-aiRoot Directory: backendFramework Preset: Other / FastAPIBranch: main
 
 Do not set a frontend output directory for this project.
 
@@ -173,27 +160,11 @@ Project Settings → Environments → Production
 
 Create the following variables inside the Production environment:
 
-DATABASE_URL
-SECRET_KEY
-ENVIRONMENT
-COOKIE_SECURE
-COOKIE_SAMESITE
-AI_ENABLED
-OPENAI_API_KEY
-OPENAI_BASE_URL
-OPENAI_MODEL
+DATABASE_URLSECRET_KEYENVIRONMENTCOOKIE_SECURECOOKIE_SAMESITEAI_ENABLEDOPENAI_API_KEYOPENAI_BASE_URLOPENAI_MODEL
 
 Use these values:
 
-DATABASE_URL=<complete Neon connection string>
-SECRET_KEY=<long random secret>
-ENVIRONMENT=production
-COOKIE_SECURE=true
-COOKIE_SAMESITE=lax
-AI_ENABLED=true
-OPENAI_API_KEY=<Groq API key>
-OPENAI_BASE_URL=https://api.groq.com/openai/v1
-OPENAI_MODEL=openai/gpt-oss-20b
+DATABASE_URL=<complete Neon connection string>SECRET_KEY=<long random secret>ENVIRONMENT=productionCOOKIE_SECURE=trueCOOKIE_SAMESITE=laxAI_ENABLED=trueOPENAI_API_KEY=<Groq API key>OPENAI_BASE_URL=https://api.groq.com/openai/v1OPENAI_MODEL=openai/gpt-oss-20b
 
 Generate a secure secret locally:
 
@@ -237,16 +208,13 @@ A successful health response confirms that the FastAPI function can start with t
 
 Complete database behavior is then verified through sign-up and CRUD operations after the frontend is deployed.
 
-5. Deploy the Next.js frontend on Vercel
+Deploy the Next.js frontend on Vercel
 
 Create a second Vercel project from the same repository.
 
 Configure:
 
-Project name: userops-web
-Root Directory: frontend
-Framework Preset: Next.js
-Branch: main
+Project name: userops-webRoot Directory: frontendFramework Preset: Next.jsBranch: main
 
 Frontend Production environment variable
 
@@ -266,7 +234,7 @@ Deploy the project and copy the frontend URL, for example:
 
 https://userops-web.vercel.app
 
-6. Configure the deployed frontend origin
+Configure the deployed frontend origin
 
 After obtaining the frontend URL, return to the backend Vercel project.
 
@@ -282,7 +250,7 @@ Then redeploy the backend.
 
 If the backend supports comma-separated origins, multiple trusted domains can be configured when needed.
 
-7. Verify production
+Verify production
 
 Test the live frontend in this order.
 
@@ -298,11 +266,7 @@ Log out and sign in again.
 
 Multi-turn creation
 
-Add Ayesha
-ayesha.com
-sorry, use ayesha@gmail.com
-skip phone
-skip city
+Add Ayeshaayesha.comsorry, use ayesha@gmail.comskip phoneskip city
 
 Verify:
 
@@ -318,9 +282,7 @@ Ayesha is created.
 
 Read and context
 
-Show Ayesha
-Where is Ayesha?
-Find ayesha@gmail.com
+Show AyeshaWhere is Ayesha?Find ayesha@gmail.com
 
 Then:
 
@@ -332,9 +294,7 @@ Islamabad
 
 Delete cancellation
 
-Delete Ayesha
-Actually don't delete her
-Find Ayesha
+Delete AyeshaActually don't delete herFind Ayesha
 
 Verify that Ayesha still exists.
 
@@ -348,9 +308,7 @@ Duplicate-name clarification
 
 Create two users with the same first name:
 
-Add Zara Khan with email zara.khan@example.com
-Add Zara Ali with email zara.ali@example.com
-Show Zara
+Add Zara Khan with email zara.khan@example.comAdd Zara Ali with email zara.ali@example.comShow Zara
 
 Verify that the assistant asks for clarification and does not guess.
 
@@ -362,8 +320,7 @@ Verify that the second record is selected.
 
 Bulk-delete guard
 
-List all users
-Delete both of them
+List all usersDelete both of them
 
 Verify:
 
@@ -399,25 +356,21 @@ Create a second operator account.
 
 Confirm that the second operator cannot see the first operator's managed users or conversations.
 
-8. AI configuration checks
+AI configuration checks
 
 The backend uses Groq when:
 
-AI_ENABLED=true
-OPENAI_API_KEY is set
-OPENAI_BASE_URL=https://api.groq.com/openai/v1
-OPENAI_MODEL=openai/gpt-oss-20b
+AI_ENABLED=trueOPENAI_API_KEY is setOPENAI_BASE_URL=https://api.groq.com/openai/v1OPENAI_MODEL=openai/gpt-oss-20b
 
 The application uses an OpenAI-compatible client, but requests are sent to Groq through the configured base URL.
 
 If AI interpretation is unavailable, the deterministic parser and dialogue-manager fallback should continue handling supported CRUD workflows safely.
 
-9. Cookie and proxy notes
+Cookie and proxy notes
 
 Production values should remain:
 
-COOKIE_SECURE=true
-COOKIE_SAMESITE=lax
+COOKIE_SECURE=trueCOOKIE_SAMESITE=lax
 
 Authentication uses an HttpOnly cookie.
 
@@ -431,7 +384,7 @@ Clear old site cookies.
 
 Test sign-up, login, refresh, and logout again.
 
-10. Runtime logs and troubleshooting
+Runtime logs and troubleshooting
 
 Backend function crashes
 
@@ -441,8 +394,7 @@ Vercel backend project → Logs
 
 A crash caused by missing settings typically shows Pydantic validation errors for environment variables such as:
 
-database_url: Field required
-secret_key: Field required
+database_url: Field requiredsecret_key: Field required
 
 Fix the variables under the Production environment and redeploy.
 
@@ -458,12 +410,9 @@ GitHub backend CI cannot import app
 
 The backend GitHub Actions job must use:
 
-defaults:
-  run:
-    working-directory: backend
+defaults:run:working-directory: backend
 
-env:
-  PYTHONPATH: ${{ github.workspace }}/backend
+env:PYTHONPATH: ${{ github.workspace }}/backend
 
 Frontend cannot reach the backend
 
@@ -477,24 +426,19 @@ Authentication fails only in production
 
 Check:
 
-COOKIE_SECURE=true
-COOKIE_SAMESITE=lax
-ALLOWED_ORIGINS=<exact frontend URL>
+COOKIE_SECURE=trueCOOKIE_SAMESITE=laxALLOWED_ORIGINS=<exact frontend URL>
 
 Clear old browser cookies and retry.
 
-11. Update repository documentation
+Update repository documentation
 
 After the frontend deploys, update both README.md and this file with:
 
-Frontend: https://YOUR-FRONTEND-DOMAIN.vercel.app
-Backend API: https://userops-ai.vercel.app
+Frontend: https://userops-web.vercel.appBackend API: https://userops-ai.vercel.app
 
 Commit the final links:
 
-git add README.md DEPLOYMENT.md
-git commit -m "Add final production deployment links"
-git push
+git add README.md DEPLOYMENT.mdgit commit -m "Add final production deployment links"git push
 
 Final production checklist
 

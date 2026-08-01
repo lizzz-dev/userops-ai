@@ -4,7 +4,15 @@ UserOps AI is a secure, context-aware administrative assistant that lets authent
 
 Instead of forcing operators to use rigid CRUD forms or memorize exact commands, the assistant understands multi-turn requests, remembers conversational context, collects missing information one field at a time, safely resolves ambiguous users, and requires confirmation before destructive actions.
 
-Repository: https://github.com/lizzz-dev/userops-ai
+Live links
+
+Frontend: https://userops-web.vercel.app
+
+Backend API: https://userops-ai.vercel.app
+
+Backend health: https://userops-ai.vercel.app/health
+
+GitHub repository: https://github.com/lizzz-dev/userops-ai
 
 Project status
 
@@ -22,21 +30,23 @@ Duplicate-name clarification
 
 Safe deletion confirmation and cancellation
 
+Friendly validation for invalid email addresses
+
+Bulk-delete protection
+
 Persistent conversation history
 
 Conversation rename and permanent deletion
+
+Workspace-level data isolation
 
 Docker-based local development
 
 PostgreSQL-backed storage
 
-Production deployment setup for Render and Vercel
+GitHub Actions CI
 
-Deployment links can be added here after production deployment:
-
-Frontend: Frontend: https://userops-web.vercel.app
-
-Backend API: https://userops-ai.vercel.app
+Production deployment with Vercel and Neon
 
 Why this project exists
 
@@ -95,6 +105,8 @@ Update user details
 
 Delete users safely
 
+Review recent activity
+
 Users can be referenced by:
 
 Full name
@@ -111,15 +123,11 @@ Multi-turn creation
 
 The assistant collects missing fields one at a time.
 
-Example:
-
 Add Ayesha
 
 What email address should I use for Ayesha?
 
 ayesha@example.com
-
-What is Ayesha's phone number? You can say "skip" or "create now".
 
 Optional fields such as phone and city can be skipped.
 
@@ -127,27 +135,20 @@ Friendly validation
 
 Invalid values are handled before database creation.
 
-Example:
-
 ayesha.com
 
 Expected response:
 
 That email address is not valid. Please enter a complete address such as name@example.com.
 
-The assistant keeps the unfinished draft and waits for a corrected value instead of exposing raw backend validation errors.
+The unfinished draft is preserved until a corrected value is provided.
 
 Context-aware follow-ups
-
-The dialogue manager remembers the active user and pending operation.
 
 Examples:
 
 Show Zara Khan
 her city should be Islamabad now
-
-Find Ali
-change his number instead
 
 Delete Zara
 actually don't delete her
@@ -158,12 +159,6 @@ Duplicate-name clarification
 
 The assistant never guesses when multiple records share a name.
 
-Example:
-
-Show Zara
-
-If two matching users exist, the assistant presents numbered choices and waits for a selection:
-
 1. Zara Khan — zara.khan@example.com
 2. Zara Ali — zara.ali@example.com
 
@@ -173,47 +168,21 @@ The second one
 
 Safe deletion
 
-Deletion requires explicit confirmation.
-
-Example:
-
-Delete Zara Khan
-
-The assistant shows the selected record and asks for confirmation before deleting it.
-
-The operator can:
-
-Confirm deletion
-
-Cancel deletion
-
-Say actually don't delete her
-
-Start another operation, which safely clears the old pending deletion
-
-Old or cancelled confirmation tokens cannot be reused.
+Deletion requires explicit confirmation. Old or cancelled confirmation tokens cannot be reused.
 
 Bulk-delete protection
 
-Bulk deletion is intentionally unsupported.
-
-Example:
-
-Delete both of them
-
-The assistant explains that destructive actions must be completed one user at a time and asks the operator to choose a single user.
-
-This prevents accidental multi-record deletion.
+Bulk deletion is intentionally unsupported. The assistant asks the operator to select one user at a time.
 
 Conversation management
 
-Conversation history stored in the database
+Persistent conversation history
 
-Conversation list in the sidebar
+Sidebar conversation list
 
 Restore full chat history
 
-Auto-generated conversation titles
+Auto-generated titles
 
 Rename conversations
 
@@ -221,25 +190,23 @@ Permanently delete conversations
 
 Refresh persistence
 
-Current-conversation switching
-
-Polished frontend experience
+Frontend experience
 
 Custom UserOps AI branding
 
 Responsive dark interface
 
-Empty conversation state
+Empty states
 
-Quick action suggestions
+Quick-action suggestions
 
 Thinking animation
 
-Success and error toast notifications
+Toast notifications
 
-/ keyboard shortcut to focus the chat input
+/ shortcut to focus the input
 
-Confirmation controls for destructive actions
+Safe confirmation controls
 
 Example commands
 
@@ -267,7 +234,6 @@ Update
 
 Change Zara Khan's city to Islamabad
 Her city should be Dubai now
-Update user ID 8
 Change his phone number instead
 
 Delete
@@ -276,72 +242,23 @@ Delete Zara
 Remove the user with email zara@example.com
 Actually don't delete her
 
-Safety and dialogue rules
-
-UserOps AI follows several deterministic safety rules:
-
-Never guess between duplicate names.
-
-Require confirmation before deletion.
-
-Allow only one destructive deletion at a time.
-
-Clear stale candidate selections when a fresh request starts.
-
-Reject invalid email addresses before database creation.
-
-Do not expose raw Pydantic or database errors to the user.
-
-Keep unfinished create drafts isolated from existing users.
-
-Prevent stale confirmation tokens from executing cancelled actions.
-
-Use deterministic CRUD services after natural-language interpretation.
-
-Treat pronouns as references to the current selected user, not as gender inference.
-
 Architecture
 
-┌──────────────────────────────┐
-│ Next.js Frontend             │
-│ Chat UI, Auth UI, History    │
-└──────────────┬───────────────┘
-               │ HTTP / JSON
-               ▼
-┌──────────────────────────────┐
-│ FastAPI Backend              │
-│ Auth, Chat API, CRUD API     │
-├──────────────────────────────┤
-│ Assistant Interpreter        │
-│ Command Parser               │
-│ Dialogue Manager             │
-│ User Resolver                │
-│ Conversation Service         │
-│ Audit Service                │
-└──────────────┬───────────────┘
-               │ SQLAlchemy
-               ▼
-┌──────────────────────────────┐
-│ PostgreSQL                   │
-│ Operators, Users, Chats      │
-│ Messages, Audit Logs         │
-└──────────────────────────────┘
-
-Request flow
-
-The frontend sends a natural-language message to the FastAPI chat endpoint.
-
-The interpreter identifies the intent and extracts structured fields.
-
-The dialogue manager applies conversation state and safety rules.
-
-The resolver identifies the correct user by name, email, or ID.
-
-Deterministic services perform the database operation.
-
-The assistant returns a structured reply, updated context, and optional UI actions.
-
-The conversation and messages are persisted for later restoration.
+Next.js frontend
+        │
+        │ same-origin /api proxy
+        ▼
+FastAPI backend
+        │
+        ├── Assistant interpreter
+        ├── Command parser
+        ├── Dialogue manager
+        ├── User resolver
+        ├── Conversation service
+        └── Audit service
+        │
+        ▼
+Neon PostgreSQL
 
 Technology stack
 
@@ -353,9 +270,7 @@ React
 
 TypeScript
 
-Custom component-based interface
-
-API proxying to the backend
+Tailwind CSS
 
 Backend
 
@@ -373,102 +288,53 @@ Argon2 password hashing
 
 Groq through an OpenAI-compatible client
 
-Deterministic dialogue and CRUD services
+Infrastructure
 
-Database and infrastructure
+Neon PostgreSQL
 
-PostgreSQL
+Vercel for frontend and backend
 
-Docker
+Docker and Docker Compose for local development
 
-Docker Compose
-
-Render deployment configuration
-
-Vercel-ready frontend
+GitHub Actions for CI
 
 Project structure
 
 userops-ai/
 ├── backend/
 │   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── db/
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   └── services/
 │   ├── tests/
+│   ├── index.py
 │   ├── Dockerfile
+│   ├── pyproject.toml
 │   └── requirements.txt
 ├── frontend/
 │   ├── public/
 │   ├── src/
-│   │   ├── app/
-│   │   ├── components/
-│   │   └── lib/
 │   ├── Dockerfile
 │   └── package.json
+├── .github/workflows/ci.yml
 ├── .env.example
 ├── .gitignore
 ├── docker-compose.yml
 ├── docker-compose.prod.yml
-├── render.yaml
 ├── DEPLOYMENT.md
 └── README.md
 
 Local setup
 
-Requirements
-
-Install:
-
-Git
-
-Docker Desktop
-
-Docker Compose
-
-Node.js
-
-Python
-
-1. Clone the repository
-
 git clone https://github.com/lizzz-dev/userops-ai.git
 cd userops-ai
 
-2. Create the environment file
-
-Copy the example file:
+Create the environment file:
 
 cp .env.example .env
 
-On Windows PowerShell:
+Windows PowerShell:
 
 Copy-Item .env.example .env
 
-Fill in the required values in .env.
-
-Use .env.example as the source of truth for the exact variable names required by the current codebase.
-
-Typical configuration includes:
-
-PostgreSQL connection values
-
-JWT/authentication secret
-
-Groq API key
-
-AI base URL and model settings
-
-Allowed frontend origins
-
-Backend URL used by the frontend
-
-Never commit the real .env file.
-
-3. Start the application
+Start the application:
 
 docker compose up --build
 
@@ -480,196 +346,61 @@ Backend: http://localhost:8000
 
 Health check: http://localhost:8000/health
 
-4. Stop the application
+Stop the application:
 
 docker compose down
 
-To remove local database volumes as well:
+Development checks
 
-docker compose down -v
-
-Use the volume-removal command carefully because it deletes local database data.
-
-Development commands
-
-Backend tests
+Backend
 
 cd backend
+python -m ruff check app tests
 python -m pytest -q
 
-Backend syntax checks
-
-python -m py_compile app/services/assistant_interpreter.py
-python -m py_compile app/services/command_parser.py
-python -m py_compile app/services/dialogue_manager.py
-
-Frontend checks
+Frontend
 
 cd frontend
-npm install
+npm ci
 npm run typecheck
 npm run lint
 npm run build
 
-Important API areas
+Production deployment
 
-The application includes routes for:
-
-Authentication
-
-User CRUD
-
-Natural-language chat
-
-Chat confirmation
-
-Conversation listing
-
-Conversation restoration
-
-Conversation rename
-
-Permanent conversation deletion
-
-Health checks
-
-The chat API returns structured responses containing the assistant reply, status, conversation context, optional record data, and safe UI actions.
-
-Testing scenarios
-
-A strong end-to-end test should include:
-
-Create flow
-
-Add Ayesha
-ayesha.com
-sorry, use ayesha@gmail.com
-skip phone
-skip city
-
-Verify that:
-
-The invalid email is rejected politely.
-
-The draft remains active.
-
-The corrected email is accepted.
-
-The user is created successfully.
-
-Context-aware update
-
-Show Ayesha
-her city should be Islamabad now
-
-Verify that the saved city is exactly:
-
-Islamabad
-
-Delete cancellation
-
-Delete Ayesha
-Actually don't delete her
-Find Ayesha
-
-Verify that Ayesha still exists.
-
-Duplicate clarification
-
-Create two users with the same first name and run:
-
-Show Zara
-
-Verify that the assistant asks the operator to select one instead of guessing.
-
-Bulk-delete guard
-
-List all users
-Delete both of them
-
-Verify that no user is automatically deleted.
-
-Conversation features
-
-Verify:
-
-History survives refresh
-
-An old conversation can be restored
-
-Rename persists
-
-Permanent delete removes the conversation
-
-Logout and login preserve workspace data
-
-Deployment
-
-The intended production setup is:
+The current production setup is:
 
 Frontend: Vercel
 
-Backend: Render
+Backend: Vercel
 
-Database: Render PostgreSQL
+Database: Neon PostgreSQL
 
-The repository contains:
+AI provider: Groq
 
-render.yaml
+CI: GitHub Actions
 
-docker-compose.prod.yml
-
-DEPLOYMENT.md
-
-Follow the detailed steps in DEPLOYMENT.md.
-
-After deployment, update the links near the top of this README.
-
-Design decisions
-
-Why use AI plus deterministic services?
-
-The language model is used to interpret natural language, but it does not directly mutate the database.
-
-Database changes are performed by deterministic services after validation, resolution, permission checks, and safety rules.
-
-This provides a better balance between conversational flexibility and predictable CRUD behavior.
-
-Why not support bulk deletion?
-
-Bulk deletion is intentionally blocked because it is a high-risk destructive operation. Requiring one user and one confirmation at a time prevents accidental data loss.
-
-Why not infer gender from pronouns?
-
-The user model does not contain a gender field. Pronouns such as her, him, and their refer to the current selected user in conversation state. The system does not guess gender from names.
-
-Why preserve conversation state?
-
-Without state, follow-up requests such as her email is..., the second one, or actually don't delete him cannot be interpreted reliably. The dialogue manager stores the active intent, selected user, pending action, missing field, and candidate list.
+See DEPLOYMENT.md for complete instructions.
 
 Security notes
 
-Passwords are hashed and never stored as plain text.
+Passwords are hashed.
 
-Authentication uses secure session handling.
+Authentication uses HttpOnly cookies.
 
-Real environment files are excluded from Git.
+Environment files are excluded from Git.
 
-Workspace data is isolated by the authenticated operator.
+Workspace data is isolated by operator.
 
-Destructive operations require confirmation.
+Destructive actions require confirmation.
 
-Old confirmation tokens are invalidated after cancellation or context changes.
+Raw internal errors are converted into user-friendly responses.
 
-Raw internal validation errors are converted into user-friendly responses.
-
-Audit logging is included for administrative operations.
+Audit logging is included.
 
 Current scope
 
-UserOps AI is designed as a focused user-management assistant.
-
-It does not attempt to:
+UserOps AI does not:
 
 Delete multiple users in one action
 
@@ -679,34 +410,28 @@ Execute arbitrary database queries
 
 Bypass deletion confirmation
 
-Replace full enterprise identity-governance software
-
-The project demonstrates a safe, conversational CRUD architecture with persistent context and production-oriented UI/UX.
+Replace enterprise identity-governance software
 
 Future improvements
 
-Possible future additions include:
-
-Role-based operator permissions
+Role-based permissions
 
 User import and export
 
-Advanced audit-log filtering
+Advanced audit filtering
 
-Workspace analytics
-
-Password-reset flow
+Password reset
 
 Email verification
 
 Rate limiting
 
-Automated end-to-end browser tests
+Browser-level end-to-end tests
 
-Production monitoring and alerting
+Production monitoring
 
 Author
 
-Developed as an AI CHATBOT test project.
+Developed as an AI chatbot internship test project.
 
 GitHub: https://github.com/lizzz-dev
